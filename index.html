@@ -1,0 +1,152 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Secure Login</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    /* Background with animation */w
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(270deg, #6a11cb, #2575fc, #ff512f, #dd2476);
+      background-size: 800% 800%;
+      animation: gradientBG 15s ease infinite;
+      overflow: hidden;
+      user-select: none; /* Disable copy/select */
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .card {
+      width: 340px;
+      padding: 25px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(12px);
+      text-align: center;
+      color: #fff;
+      animation: fadeIn 1.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    input {
+      width: 90%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+    }
+
+    input:focus {
+      box-shadow: 0 0 6px #fff;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(45deg, #ff512f, #dd2476);
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(255,255,255,0.6);
+    }
+
+    #msg {
+      margin-top: 12px;
+      font-weight: bold;
+      color: #ffdddd;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
+
+  <div class="card">
+    <h2>🔒 Secure Login</h2>
+    <input id="username" placeholder="Username" autocomplete="off" />
+    <input id="password" type="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <p id="msg"></p>
+  </div>
+<script>
+const scriptURL = "https://script.google.com/macros/s/AKfycbx1Ai3JTy-agSGCuccO5e4ebkT3VJ-gEMuWqazvEHf7SbBnljsOJ28ckAw8KaFOktbmQw/exec";
+async function login() {
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value.trim();
+  const msgBox = document.getElementById('msg');
+  msgBox.textContent = "";
+
+  if (!username || !password) {
+    msgBox.textContent = "⚠ Please enter both username & password.";
+    return;
+  }
+
+  try {
+    const res = await fetch(scriptURL, {
+      method: 'POST',
+      body: JSON.stringify({ action: 'login', username, password })
+    });
+    const data = await res.json();
+    console.log("Login response:", data);
+
+    if (data.status === 'blocked') {
+      msgBox.style.color = "#ffdddd";
+      msgBox.textContent = data.message || "⚠ You have already submitted the test.";
+      return; // stop login
+    }
+
+    if (data.status === 'success') {
+      localStorage.setItem('user', username);
+      localStorage.setItem('dept', data.dept);
+      localStorage.setItem('role', data.role);
+
+      msgBox.style.color = "#b3ffb3";
+      msgBox.textContent = "✅ Login Successful! Redirecting...";
+
+      setTimeout(() => {
+        if (data.role === 'Admin') window.location.href = 'admin.html';
+        else window.location.href = 'test.html';
+      }, 1000);
+
+    } else {
+      msgBox.style.color = "#ffdddd";
+      msgBox.textContent = "❌ Invalid login credentials!";
+    }
+  } catch (err) {
+    console.error("Login error:", err);
+    msgBox.style.color = "#ffdddd";
+    msgBox.textContent = "⚠ Server error. Try again.";
+  }
+}
+</script>
+</body>
+</html>
