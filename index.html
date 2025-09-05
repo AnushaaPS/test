@@ -86,6 +86,50 @@
       font-weight: bold;
       color: #ffdddd;
     }
+    .grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+/* Mobile friendly adjustments */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+  header h2 {
+    font-size: 1.4rem;
+  }
+  .card {
+    padding: 15px;
+    margin: 10px;
+  }
+  button {
+    padding: 10px;
+    font-size: 14px;
+  }
+  input {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: 1fr; /* stack cards in single column */
+  }
+  header h2 {
+    font-size: 1.2rem;
+  }
+  button {
+    width: 100%;
+    font-size: 13px;
+  }
+  input {
+    width: 100%;
+  }
+}
+
   </style>
 </head>
 <body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
@@ -150,3 +194,4 @@ async function login() {
 </script>
 </body>
 </html>
+
