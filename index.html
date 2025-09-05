@@ -118,19 +118,22 @@ async function login() {
     }
 
     if (data.status === 'success') {
-      localStorage.setItem('user', username);
-      localStorage.setItem('dept', data.dept);
-      localStorage.setItem('role', data.role);
+  localStorage.setItem('user', username);
+  localStorage.setItem('dept', data.dept);
+  localStorage.setItem('role', data.role);
 
-      msgBox.style.color = "#b3ffb3";
-      msgBox.textContent = "✅ Login Successful! Redirecting...";
+  msgBox.style.color = "#b3ffb3";
+  msgBox.textContent = "✅ Login Successful! Redirecting...";
 
-      setTimeout(() => {
-        if (data.role === 'Admin') window.location.href = 'admin.html';
-        else window.location.href = 'test.html';
-      }, 1000);
-
+  setTimeout(() => {
+    if (data.role === 'Admin') {
+      window.location.href = 'admin.html';
     } else {
+      window.location.href = 'instructions.html';  // 👈 go to instructions page first
+    }
+  }, 1000);
+}
+else {
       msgBox.style.color = "#ffdddd";
       msgBox.textContent = "❌ Invalid login credentials!";
     }
@@ -143,6 +146,7 @@ async function login() {
 </script>
 </body>
 </html>
+
 
 
 
