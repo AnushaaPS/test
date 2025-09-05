@@ -1,11 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Secure Login</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
-    /* Background with animation */w
     body {
       margin: 0;
       font-family: "Poppins", sans-serif;
@@ -13,29 +12,20 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background: linear-gradient(270deg, #6a11cb, #2575fc, #ff512f, #dd2476);
-      background-size: 800% 800%;
-      animation: gradientBG 15s ease infinite;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      background-size: cover;
       overflow: hidden;
-      user-select: none; /* Disable copy/select */
-    }
-
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
     }
 
     .card {
-      width: 340px;
+      width: 90%;
+      max-width: 360px;
       padding: 25px;
       border-radius: 15px;
-      background: rgba(255, 255, 255, 0.15);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-      backdrop-filter: blur(12px);
+      background: #fff;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
       text-align: center;
-      color: #fff;
-      animation: fadeIn 1.2s ease;
+      animation: fadeIn 1s ease;
     }
 
     @keyframes fadeIn {
@@ -46,20 +36,24 @@
     h2 {
       margin-bottom: 20px;
       font-weight: 600;
+      font-size: 1.5rem;
+      color: #333;
     }
 
     input {
-      width: 90%;
+      width: 100%;
       padding: 12px;
       margin: 10px 0;
       border-radius: 8px;
-      border: none;
-      outline: none;
+      border: 1px solid #ddd;
       font-size: 15px;
+      box-sizing: border-box;
     }
 
     input:focus {
-      box-shadow: 0 0 6px #fff;
+      border-color: #6a11cb;
+      outline: none;
+      box-shadow: 0 0 6px rgba(106,17,203,0.3);
     }
 
     button {
@@ -73,27 +67,26 @@
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
-      transition: 0.3s;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
     }
 
     button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 12px rgba(255,255,255,0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     #msg {
       margin-top: 12px;
       font-weight: bold;
-      color: #ffdddd;
+      color: #e63946;
     }
   </style>
 </head>
-<body oncontextmenu="return false" onselectstart="return false" ondragstart="return false">
-
+<body>
   <div class="card">
     <h2>🔒 Secure Login</h2>
-    <input id="username" placeholder="Username" autocomplete="off" />
-    <input id="password" type="password" placeholder="Password" />
+    <input id="username" placeholder="Mail ID (Eg. 22ucs113@kamarajengg.edu.in)" autocomplete="off" />
+    <input id="password" type="password" placeholder="Roll No (Eg. 22UCS113)" />
     <button onclick="login()">Login</button>
     <p id="msg"></p>
   </div>
@@ -150,5 +143,6 @@ async function login() {
 </script>
 </body>
 </html>
+
 
 
