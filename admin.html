@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> 
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -85,14 +85,14 @@
 
     <!-- 🔹 Department Student Stats -->
 <div class="card">
-  <h3>👥 Department Student Stats</h3>
+  <h3>Department-wise Students Stats</h3>
   <div id="deptStats" class="grid"></div>
 </div>
 
 
     <!-- 🔹 Department Results Summary -->
     <div class="card">
-      <h3>📊 Department Results Summary</h3>
+      <h3>Department-wise Results Summary</h3>
       <div id="resultsSummary" class="grid"></div>
     </div>
 
@@ -103,11 +103,11 @@
     
         <!-- 🔹 Department Summary Section -->
     <div class="card">
-      <h3>🏫 Department Question Summary</h3>
+      <h3>Department-wise Question Summary</h3>
       <div id="deptSummary" class="grid"></div>
     </div>
     
-    <h3>📖 All Questions</h3>
+    <h3>All Questions</h3>
     <div id="qContainer" class="card"></div>
     <div class="nav">
       <button onclick="prevQuestion()">⬅ Prev</button>
@@ -115,11 +115,11 @@
     </div>
   </main>
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbx1Ai3JTy-agSGCuccO5e4ebkT3VJ-gEMuWqazvEHf7SbBnljsOJ28ckAw8KaFOktbmQw/exec";
-let currentIndex = 0;
+const scriptURL = "https://script.google.com/macros/s/AKfycbwWwQNzgjW8UcWVJLyT2PdvDw0RVmcJp40u06dcdi9JB_7oxBEJmS4_gdT2O8aoSBK2Vg/exec";
 
 function checkAccess() {
-  if (localStorage.getItem('role') !== 'Admin') {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  if (user.role !== 'Admin') {
     alert('Access Denied!');
     window.location.href = 'index.html';
   } else {
@@ -161,15 +161,15 @@ async function fetchDeptStats() {
   renderDeptStats(stats);
 }
 
-function renderDeptStats(stats) {
-  if (!stats || Object.keys(stats).length === 0) {
+function renderDeptStats(statsObj) {
+  if (!statsObj || Object.keys(statsObj).length === 0) {
     document.getElementById('deptStats').innerHTML = "<p>No data yet.</p>";
     return;
   }
 
   let html = "";
-  Object.keys(stats).forEach(dept => {
-    const s = stats[dept];
+  Object.keys(statsObj).forEach(dept => {
+    const s = statsObj[dept];
     const percent = s.total > 0 ? Math.round((s.attended / s.total) * 100) : 0;
 
     html += `
@@ -181,6 +181,7 @@ function renderDeptStats(stats) {
       </div>
     `;
   });
+
   document.getElementById('deptStats').innerHTML = html;
 }
 
@@ -269,7 +270,8 @@ function renderResultsSummary() {
 
   const counts = {};
   results.forEach(r => {
-    const dept = r.dept || "Unknown";
+    // make sure 'dept' exists; if not, fallback to "Unknown"
+    const dept = r.dept?.trim() || "Unknown";
     counts[dept] = (counts[dept] || 0) + 1;
   });
 
@@ -286,6 +288,7 @@ function renderResultsSummary() {
   document.getElementById('resultsSummary').innerHTML = html;
 }
 
+
 function selectDept(dept) {
   selectedDept = dept;
   document.getElementById('selectedDept').innerText = `Department: ${dept}`;
@@ -297,9 +300,9 @@ function downloadDeptResults() {
   
   const deptResults = results.filter(r => r.dept === selectedDept);
 
-  let csv = "Name,Dept,Score,Total,Violations,StartTime,EndTime,DurationSec,Answers\n";
+  let csv = "UserName,Name,Dept,Score,Total,Violations,StartTime,EndTime,DurationSec,Answers\n";
   deptResults.forEach(r => {
-    csv += `"${r.name}","${r.dept}","${r.score}","${r.total}","${r.violations}","${r.startTime}","${r.endTime}","${r.durationSec}","${r.answers}"\n`;
+    csv += `"${r.username}","${r.name}","${r.dept}","${r.score}","${r.total}","${r.violations}","${r.startTime}","${r.endTime}","${r.durationSec}","${r.answers}"\n`;
   });
 
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
