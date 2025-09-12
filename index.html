@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Secure Login</title>
+  <title>CMAP</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     body {
@@ -84,14 +84,15 @@
 </head>
 <body>
   <div class="card">
-    <h2>🔒 Secure Login</h2>
-    <input id="username" placeholder="Mail ID (Eg. 22ucs113@kamarajengg.edu.in)" autocomplete="off" />
-    <input id="password" type="password" placeholder="Roll No (Eg. 22UCS113)" />
+    <h2>Kamaraj College of Engineering and Technology</h2>
+    <h2>🔒 Competitive Mode of Assessment Platform (CMAP)</h2>
+    <input id="username" placeholder="Mail ID (Eg. 22uec113@kamarajengg.edu.in)" autocomplete="off" />
+    <input id="password" type="password" placeholder="Roll No (Eg. 22UEC113)" />
     <button onclick="login()">Login</button>
     <p id="msg"></p>
   </div>
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbx1Ai3JTy-agSGCuccO5e4ebkT3VJ-gEMuWqazvEHf7SbBnljsOJ28ckAw8KaFOktbmQw/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbwWwQNzgjW8UcWVJLyT2PdvDw0RVmcJp40u06dcdi9JB_7oxBEJmS4_gdT2O8aoSBK2Vg/exec";
 async function login() {
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value.trim();
@@ -112,41 +113,43 @@ async function login() {
     console.log("Login response:", data);
 
     if (data.status === 'blocked') {
-      msgBox.style.color = "#ffdddd";
+      msgBox.style.color = "#ff0000";
       msgBox.textContent = data.message || "⚠ You have already submitted the test.";
       return; // stop login
     }
 
     if (data.status === 'success') {
-  localStorage.setItem('user', username);
-  localStorage.setItem('dept', data.dept);
-  localStorage.setItem('role', data.role);
-
-  msgBox.style.color = "#b3ffb3";
+  const userObj = {
+    username: username,
+    name: data.name,
+    dept: data.dept,
+    role: data.role
+  };
+  localStorage.setItem('user', JSON.stringify(userObj));
+  msgBox.style.color = "#00ff00";
   msgBox.textContent = "✅ Login Successful! Redirecting...";
 
   setTimeout(() => {
     if (data.role === 'Admin') {
       window.location.href = 'admin.html';
     } else {
-      window.location.href = 'instructions.html';  // 👈 go to instructions page first
+      window.location.href = 'instructions.html';
     }
   }, 1000);
-}
-else {
-      msgBox.style.color = "#ffdddd";
+
+    } else {
+      msgBox.style.color = "#ff0000";
       msgBox.textContent = "❌ Invalid login credentials!";
     }
   } catch (err) {
     console.error("Login error:", err);
-    msgBox.style.color = "#ffdddd";
+    msgBox.style.color = "#ff0000";
     msgBox.textContent = "⚠ Server error. Try again.";
   }
 }
 </script>
 </body>
 </html>
-
 
 
 
