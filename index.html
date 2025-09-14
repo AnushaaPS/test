@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>CMAP</title>
+  <title>Secure Login</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     body {
@@ -27,7 +27,7 @@
       text-align: center;
       animation: fadeIn 1s ease;
     }
-
+    
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -84,15 +84,18 @@
 </head>
 <body>
   <div class="card">
-    <h2>Kamaraj College of Engineering and Technology</h2>
-    <h2>🔒 Competitive Mode of Assessment Platform (CMAP)</h2>
-    <input id="username" placeholder="Mail ID (Eg. 22uec113@kamarajengg.edu.in)" autocomplete="off" />
-    <input id="password" type="password" placeholder="Roll No (Eg. 22UEC113)" />
+    <h2>🔒 Secure Login</h2>
+    <input id="username" placeholder="Mail ID (Eg. 22ucs113@kamarajengg.edu.in)" autocomplete="off" />
+    <input id="password" type="password" placeholder="Roll No (Eg. 22UCS113)" />
     <button onclick="login()">Login</button>
     <p id="msg"></p>
+    <!-- Review button hidden by default -->
+    <button id="reviewBtn" style="display:none; margin-top:15px;">View My Responses</button>
   </div>
+
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbxLSIjoTuKTqjhKDtoMrvsBBYEgMhWQpagWzc9gLlwQh41d3fHnxvmRk20_Nu0C-XScug/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbwbcySJgtg8_6NPlTUd2qpLB7rVsW6DYFjdyE-ALLADjXmtPBzhWzb76_DD_vPnEXyR/exec";
+
 async function login() {
   const username = document.getElementById('username').value.trim();
   const password = document.getElementById('password').value.trim();
@@ -113,7 +116,7 @@ async function login() {
     console.log("Login response:", data);
 
     if (data.status === 'blocked') {
-      msgBox.style.color = "#ff0000";
+      msgBox.style.color = "#ffdddd";
       msgBox.textContent = data.message || "⚠ You have already submitted the test.";
       return; // stop login
     }
@@ -126,32 +129,49 @@ async function login() {
     role: data.role
   };
   localStorage.setItem('user', JSON.stringify(userObj));
-  msgBox.style.color = "#00ff00";
+  msgBox.style.color = "#b3ffb3";
   msgBox.textContent = "✅ Login Successful! Redirecting...";
 
-  setTimeout(() => {
+  setTimeout(async () => {
     if (data.role === 'Admin') {
       window.location.href = 'admin.html';
     } else {
-      window.location.href = 'instructions.html';
+      // 🔍 Check if already submitted result
+      try {
+        const res2 = await fetch(scriptURL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'getUserResult', username })
+        });
+        const reviewData = await res2.json();
+
+        if (!reviewData.error) {
+          // ✅ Already submitted & review enabled
+          window.location.href = 'review.html';
+        } else {
+          // ✅ Not submitted yet → go to instructions
+          window.location.href = 'instructions.html';
+        }
+      } catch (err) {
+        console.error("Check review error:", err);
+        window.location.href = 'instructions.html';
+      }
     }
   }, 1000);
-
     } else {
-      msgBox.style.color = "#ff0000";
+      msgBox.style.color = "#ffdddd";
       msgBox.textContent = "❌ Invalid login credentials!";
     }
   } catch (err) {
     console.error("Login error:", err);
-    msgBox.style.color = "#ff0000";
+    msgBox.style.color = "#ffdddd";
     msgBox.textContent = "⚠ Server error. Try again.";
   }
 }
+
+// Review button click
+document.getElementById("reviewBtn").addEventListener("click", () => {
+  window.location.href = "review.html";
+});
 </script>
 </body>
 </html>
-
-
-
-
-
