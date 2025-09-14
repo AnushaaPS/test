@@ -160,7 +160,7 @@
 
 <script>
 /* ---------- CONFIG ---------- */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxLSIjoTuKTqjhKDtoMrvsBBYEgMhWQpagWzc9gLlwQh41d3fHnxvmRk20_Nu0C-XScug/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwbcySJgtg8_6NPlTUd2qpLB7rVsW6DYFjdyE-ALLADjXmtPBzhWzb76_DD_vPnEXyR/exec";
 /* ---------- STATE ---------- */
 const EXAM_SECONDS = 60 * 60; // 60 minutes = 3600 seconds
 let questions = [];           // array fetched from server
@@ -458,6 +458,7 @@ function renderQuestion(){
   renderPalette();
 };
 
+
   });
 
   // show/hide submit button
@@ -542,26 +543,33 @@ async function submitAll(endReason){
   const startISO = startTimeISO || new Date().toISOString();
   const durationSec = EXAM_SECONDS - timerSecs;
 
-  // compute score
+  // map answers to { "Question": "Answer text" } format
+  const formattedAnswers = {};
   let score = 0;
-  for (let i=0;i<questions.length;i++){
+
+  questions.forEach((q, i) => {
     const sel = answers[i];
-    if (!sel) continue;
-    const mapping = { A:0,B:1,C:2,D:3 };
-    const idx = mapping[sel];
-    if (idx !== undefined) {
-      const selectedText = (questions[i].options[idx]?.text || questions[i].options[idx] || "").trim();
-      const correctText = (questions[i].correctText || questions[i].answer || "").trim();
-      if (selectedText === correctText) score++;
+    const questionText = q.question || q.q || `Q${i+1}`;
+    if (sel) {
+      const mapping = { A:0, B:1, C:2, D:3 };
+      const idx = mapping[sel];
+      const answerText = q.options[idx]?.text || q.options[idx] || "";
+      formattedAnswers[questionText] = answerText;
+
+      // ✅ calculate score
+      const correctText = (q.correctText || q.answer || "").trim();
+      if (answerText.trim() === correctText) score++;
+    } else {
+      formattedAnswers[questionText] = "";
     }
-  }
+  });
 
   const payload = {
     action: 'saveResult',
     username: username,
     name: fullName,
     dept: userDept,
-    answers: answers,
+    answers: formattedAnswers,  // ✅ Question → Answer text
     score: score,
     total: questions.length,
     violations: violCount,
@@ -571,7 +579,7 @@ async function submitAll(endReason){
     durationSec: durationSec,
     endReason: endReason || 'manual'
   };
-
+  
   try {
     const res = await fetch(SCRIPT_URL, {
       method: 'POST',
@@ -642,6 +650,5 @@ window.addEventListener('load', ()=> {
 </script>
 </body>
 </html>
-
 
 
